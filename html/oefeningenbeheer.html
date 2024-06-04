@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+	<title> Database Overzicht </title>
+	<meta charset="utf-8" />
+	<style>
+		body {
+			width: 80%;
+			max-width: 600px;
+			margin: auto;
+			margin-top: 50px;
+			font-family: Arial, sans-serif;
+		}
+
+		h1 {
+			color: #333;
+			text-align: center;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			margin-top: 20px;
+		}
+
+		table, th, td {
+			border: 1px solid #ddd;
+		}
+
+		th, td {
+			padding: 10px;
+			text-align: left;
+		}
+
+		button {
+			padding: 10px;
+			background-color: #4CAF50;
+			color: white;
+			border: none;
+			border-radius: 4px;
+			cursor: pointer;
+		}
+
+		button:hover {
+			background-color: #45a049;
+		}
+
+		.btn-delete {
+			background-color: #d9534f;
+		}
+
+		.btn-delete:hover {
+			background-color: #c9302c;
+		}
+
+		.btn-update {
+			background-color: #5cb85c;
+		}
+
+		.btn-update:hover {
+			background-color: #4cae4c;
+		}
+
+		#addContainer {
+			margin-top: 20px;
+			display: flex;
+			justify-content: center;
+		}
+
+		#addForm {
+			width: 100%;
+		}
+
+		#addForm input,
+		#addForm select {
+			width: calc(100% - 22px);
+			padding: 10px;
+			margin: 5px 0;
+			border: 1px solid #ddd;
+			border-radius: 4px;
+			box-sizing: border-box;
+		}
+	</style>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+	<h1>SummaMove - Oefeningen</h1>
+	<table>
+		<tr>
+			<th>Naam</th>
+			<th>Beschrijving</th>
+		</tr>
+		<tbody id="tabelInhoud">
+	</table>
+
+	<div id="voegToeContainer" style="visibility: hidden">
+		<label>Naam:</label><input type="text" id="naam" required /><br>
+		<label>Beschrijving:</label><input type="date" id="geboortedatum" /><br>
+		<button onclick="voegToe()" type="button">Toevoegen</button>
+	</div>
+
+	<div id="loginContainer" style="visibility: visible">
+		<div>
+			<input type="email" placeholder="mail" id="mail" required>
+			<input type="password" placeholder="wachtwoord" id="wachtwoord" required>
+			<button type="submit" onclick="login()">Login</button>
+		</div>
+	</div>
+
+	<script>
+        "use strict"
+        const apiBasis = "http://127.0.0.1:8000/api/"
+        const apiTeams = apiBasis + "teams/"
+        const apiCoureurs = apiBasis + "coureurs/"
+        const apiLogin = apiBasis + "login/"
+    
+        let teams = []
+        let coureurs = []
+    
+        let access_token = undefined
+    
+        const laadTeams = async () => {
+            console.log('B LaadTeams', access_token)
+            const response = await axios.get(apiTeams, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': 'Bearer ' + access_token
+                }
+            })
+    
+            const json = await response.data
+            let selectInhoud = ''
+            json.data.map(el => {
+                teams[el.id] = el.teamnaam
+                selectInhoud += `<option value="${el.id}">${el.teamnaam}</option>`
+            })
+            document.querySelector("#selectInhoud").innerHTML = selectInhoud
+            access_token = response.data.access_token
+            console.log('E LaadTeams', access_token)
+        }
+    
+        const laadCoureurs = async () => {
+            console.log('B Laadcoureurs', access_token)
+            const response = await axios.get(apiCoureurs, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': 'Bearer ' + access_token
+                }
+            })
+            coureurs = await response.data
+            access_token = response.data.access_token
+            console.log('E Laadcoureurs', access_token)
+        }
+    
+        const toonCoureurs = () => {
+            console.log('B Tooncoureurs', access_token)
+            let tabelInhoud = ''
+            coureurs.data.map(coureur => tabelInhoud += `<tr><td>${coureur.naam}</td>
+                    <td>${coureur.geboortedatum}</td>
+                    <td>${coureur.land}</td>
+                    <td>${coureur.racenummer}</td>
+                    <td>${teams[coureur.team_id]}</td>
+                    <td>${coureur.debuutjaar}</td>
+                    <td onclick="verwijder(${coureur.id})"> x </td></tr>`);
+    
+                    console.log(tabelInhoud)
+            document.querySelector("#tabelInhoud").innerHTML = tabelInhoud
+            console.log('E Tooncoureurs', access_token)
+        }
+    
+    
+        const login = async () => {
+            const password = document.querySelector("#wachtwoord").value
+            const email = document.querySelector("#mail").value
+            const jsonstring = { "password": password, "email": email }
+            console.log("login: ", jsonstring)
+            const respons = await axios.post(apiLogin, jsonstring, { headers: { 'Content-Type': 'application/json' } })
+            console.log('status code', respons.status)
+            access_token = respons.data.access_token
+            console.log('access_token: ', access_token)
+    
+            document.querySelector("#loginContainer").style.visibility = "hidden"
+            document.querySelector("#voegToeContainer").style.visibility = "visible"
+            document.querySelectorAll("td:last-child").forEach(el => el.style.display = "inline")
+            laad()
+        }
+    
+        const laad = async () => {
+            await laadCoureurs()
+            await laadTeams()
+            toonCoureurs()
+        }
+    
+        const voegToe = async () => {
+            console.log('B Voegtoe', access_token)
+            const naam = document.querySelector("#naam").value
+            const geboortedatum = document.querySelector("#geboortedatum").value
+            const land = document.querySelector("#land").value
+            const racenummer = document.querySelector("#racenummer").value
+            const team = document.querySelector("#selectInhoud").value
+            const debuutjaar = document.querySelector("#debuutjaar").value
+            const jsonstring = { "naam": naam, "geboortedatum": geboortedatum, "land": land, "racenummer": racenummer, "team_id": team, "debuutjaar": debuutjaar }
+            console.log("voeg toe: ", jsonstring)
+            const respons = await axios.post(apiCoureurs, jsonstring,
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'Authorization': 'Bearer ' + access_token
+                    }
+                })
+            console.log('status code', respons.status)
+            access_token = respons.data.access_token
+            console.log('E Voegtoe', access_token)
+            await laadCoureurs()
+            toonCoureurs()
+            document.getElementById('naam').value = '';
+            document.getElementById('land').value = '';
+            document.getElementById('racenummer').value = '';
+            document.getElementById('selectInhoud').value = 1;
+            document.getElementById('geboortedatum').value = '';
+            document.getElementById('debuutjaar').value = '';
+        }
+    
+        const verwijder = async (id) => {
+            console.log('B Verwijder', access_token)
+            console.log("verwijder: ", id)
+            const respons = await axios.delete(apiCoureurs + id, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': 'Bearer ' + access_token
+                }
+            })
+            access_token = respons.data.access_token
+            console.log('status code', respons.status)
+            console.log('E Verwijder', access_token)
+            await laadCoureurs()
+            toonCoureurs()
+        }	
+    </script>
+
+</body>
+
+</html>
