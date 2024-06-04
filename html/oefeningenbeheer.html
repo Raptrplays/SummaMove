@@ -101,13 +101,6 @@
 		<button onclick="voegToe()" type="button">Toevoegen</button>
 	</div>
 
-	<div id="loginContainer" style="visibility: visible">
-		<div>
-			<input type="email" placeholder="mail" id="mail" required>
-			<input type="password" placeholder="wachtwoord" id="wachtwoord" required>
-			<button type="submit" onclick="login()">Login</button>
-		</div>
-	</div>
 
 	<script>
         "use strict"
@@ -172,22 +165,6 @@
             console.log('E Tooncoureurs', access_token)
         }
     
-    
-        const login = async () => {
-            const password = document.querySelector("#wachtwoord").value
-            const email = document.querySelector("#mail").value
-            const jsonstring = { "password": password, "email": email }
-            console.log("login: ", jsonstring)
-            const respons = await axios.post(apiLogin, jsonstring, { headers: { 'Content-Type': 'application/json' } })
-            console.log('status code', respons.status)
-            access_token = respons.data.access_token
-            console.log('access_token: ', access_token)
-    
-            document.querySelector("#loginContainer").style.visibility = "hidden"
-            document.querySelector("#voegToeContainer").style.visibility = "visible"
-            document.querySelectorAll("td:last-child").forEach(el => el.style.display = "inline")
-            laad()
-        }
     
         const laad = async () => {
             await laadCoureurs()
