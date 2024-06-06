@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Gegenereerd op: 03 jun 2024 om 13:41
+-- Gegenereerd op: 06 jun 2024 om 13:46
 -- Serverversie: 10.4.27-MariaDB
 -- PHP-versie: 8.2.0
 
@@ -117,7 +117,9 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (2, '0001_01_01_000001_create_cache_table', 1),
 (3, '0001_01_01_000002_create_jobs_table', 1),
 (4, '2024_06_03_112714_create_oefeningen_table', 1),
-(5, '2024_06_03_112723_create_prestaties_table', 1);
+(5, '2024_06_03_112723_create_prestaties_table', 1),
+(6, '2024_06_06_064440_create_todos_table', 1),
+(7, '2024_06_06_070932_create_personal_access_tokens_table', 1);
 
 -- --------------------------------------------------------
 
@@ -130,8 +132,16 @@ CREATE TABLE `oefeningen` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `naam` varchar(255) NOT NULL,
-  `beschrijving` varchar(255) NOT NULL
+  `beschrijvingNL` varchar(255) NOT NULL,
+  `beschrijvingEN` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Gegevens worden geëxporteerd voor tabel `oefeningen`
+--
+
+INSERT INTO `oefeningen` (`id`, `created_at`, `updated_at`, `naam`, `beschrijvingNL`, `beschrijvingEN`) VALUES
+(3, NULL, NULL, 'Push-up edit', 'Begin in een plankpositie met je handen op schouderbreedte. Buig je ellebogen om je lichaam naar de grond te brengen en duw jezelf weer omhoog.', 'Start in a plank position with your hands shoulder-width apart. Bend your elbows to lower your body to the ground and push yourself back up.');
 
 -- --------------------------------------------------------
 
@@ -144,6 +154,32 @@ CREATE TABLE `password_reset_tokens` (
   `token` varchar(255) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Tabelstructuur voor tabel `personal_access_tokens`
+--
+
+CREATE TABLE `personal_access_tokens` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `tokenable_type` varchar(255) NOT NULL,
+  `tokenable_id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `token` varchar(64) NOT NULL,
+  `abilities` text DEFAULT NULL,
+  `last_used_at` timestamp NULL DEFAULT NULL,
+  `expires_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Gegevens worden geëxporteerd voor tabel `personal_access_tokens`
+--
+
+INSERT INTO `personal_access_tokens` (`id`, `tokenable_type`, `tokenable_id`, `name`, `token`, `abilities`, `last_used_at`, `expires_at`, `created_at`, `updated_at`) VALUES
+(18, 'App\\Models\\User', 1, 'API Token', '7e98eb1506940aa7f9b4545153655e4fd54a16b95afa39949768dcfce5791ea2', '[\"*\"]', NULL, NULL, '2024-06-06 07:36:18', '2024-06-06 07:36:18');
 
 -- --------------------------------------------------------
 
@@ -174,6 +210,25 @@ CREATE TABLE `sessions` (
   `last_activity` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Gegevens worden geëxporteerd voor tabel `sessions`
+--
+
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
+('Q5vx7yVDNjTJLxlsqGIlGaeECDTj6zlsVrO8FM7q', NULL, '127.0.0.1', 'PostmanRuntime/7.37.3', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiZTRRMVM5MXJ3UE9XeTRBcUpHWGdXSG54eDlXdkRqem1Id2hxVnhWTCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1717661571);
+
+-- --------------------------------------------------------
+
+--
+-- Tabelstructuur voor tabel `todos`
+--
+
+CREATE TABLE `todos` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- --------------------------------------------------------
 
 --
@@ -186,11 +241,17 @@ CREATE TABLE `users` (
   `email` varchar(255) NOT NULL,
   `email_verified_at` timestamp NULL DEFAULT NULL,
   `password` varchar(255) NOT NULL,
-  `admin` tinyint(1) NOT NULL,
   `remember_token` varchar(100) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Gegevens worden geëxporteerd voor tabel `users`
+--
+
+INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
+(1, 'admin', 'admin@admin.nl', NULL, '$2y$12$ym4kF086veOXGYUb2T2maOP8Jwq5NwYwncPcpbkiYSJqhq/rsB4ee', NULL, '2024-06-06 06:16:03', '2024-06-06 06:16:03');
 
 --
 -- Indexen voor geëxporteerde tabellen
@@ -247,6 +308,14 @@ ALTER TABLE `password_reset_tokens`
   ADD PRIMARY KEY (`email`);
 
 --
+-- Indexen voor tabel `personal_access_tokens`
+--
+ALTER TABLE `personal_access_tokens`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `personal_access_tokens_token_unique` (`token`),
+  ADD KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`);
+
+--
 -- Indexen voor tabel `prestaties`
 --
 ALTER TABLE `prestaties`
@@ -261,6 +330,12 @@ ALTER TABLE `sessions`
   ADD PRIMARY KEY (`id`),
   ADD KEY `sessions_user_id_index` (`user_id`),
   ADD KEY `sessions_last_activity_index` (`last_activity`);
+
+--
+-- Indexen voor tabel `todos`
+--
+ALTER TABLE `todos`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexen voor tabel `users`
@@ -289,13 +364,19 @@ ALTER TABLE `jobs`
 -- AUTO_INCREMENT voor een tabel `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT voor een tabel `oefeningen`
 --
 ALTER TABLE `oefeningen`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT voor een tabel `personal_access_tokens`
+--
+ALTER TABLE `personal_access_tokens`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT voor een tabel `prestaties`
@@ -304,10 +385,16 @@ ALTER TABLE `prestaties`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT voor een tabel `todos`
+--
+ALTER TABLE `todos`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT voor een tabel `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Beperkingen voor geëxporteerde tabellen
