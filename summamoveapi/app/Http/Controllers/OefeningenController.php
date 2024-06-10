@@ -12,7 +12,7 @@ class OefeningenController extends Controller
     public function index(Request $request)
     {
         Log::info(
-            'modellen opgevraagd op:',
+            'Oefeningen opgevraagd op:',
             [
                 'ip' => $request->ip(),
                 'data' => $request->all()
@@ -34,6 +34,14 @@ class OefeningenController extends Controller
 
     public function store(Request $request)
     {
+        $validationRules = [
+            'naam' => 'required|string|max:255',
+            'beschrijvingNL' => 'required|string',
+            'beschrijvingEN' => 'required|string',
+        ];
+    
+        $request->validate($validationRules);
+
         try {
             $oefening = Oefeningen::create($request->all());
 

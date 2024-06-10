@@ -13,13 +13,17 @@ return new class extends Migration
     {
         Schema::create('prestaties', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
-
-            $table->unsignedBigInteger('oefeningId');
-            $table->foreign('oefeningId')->references('id')->on('oefeningen')->onDelete('cascade');
 
             $table->unsignedBigInteger('gebruikerId');
             $table->foreign('gebruikerId')->references('id')->on('users')->onDelete('cascade');
+
+            $table->unsignedBigInteger('oefeningId');
+            $table->foreign('oefeningId')->references('id')->on('oefeningen')->onDelete('cascade');
+            
+            $table->date('datum');
+            
+            $table->integer('aantal');
+
         });
     }
 

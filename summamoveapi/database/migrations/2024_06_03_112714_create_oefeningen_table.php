@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('oefeningen', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
             $table->string('naam');
             $table->string('beschrijvingNL');
             $table->string('beschrijvingEN');
