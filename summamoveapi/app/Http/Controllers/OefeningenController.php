@@ -24,12 +24,7 @@ class OefeningenController extends Controller
             Log::error('Error bij het opvragen van oefeningen: ' . $e->getMessage());
         }
 
-        $content = [
-            'success' => true,
-            'access_token' => auth()->user()->createToken('API Token')->plainTextToken,
-            'token_type' => 'Bearer',
-        ];
-        return response()->json($content, 200);
+        return response()->json([], 500);
     }
 
     public function store(Request $request)
@@ -63,7 +58,7 @@ class OefeningenController extends Controller
         }
     }
 
-    public function update(Request $request, oefeningen $oefeningen)
+    public function update(Request $request, Oefeningen $oefeningen)
     {
         try {
             $validatedData = $request->validate([

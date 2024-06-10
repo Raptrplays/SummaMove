@@ -2,7 +2,7 @@
 <html lang="nl">
 
 <head>
-    <title> Database Overzicht </title>
+    <title>Database Overzicht</title>
     <meta charset="utf-8" />
     <style>
         body {
@@ -41,7 +41,7 @@
         button {
             padding: 10px;
             background-color: #4CAF50;
-            color: fff;
+            color: #fff;
             border: none;
             border-radius: 4px;
             cursor: pointer;
@@ -72,6 +72,11 @@
         label {
             color: #fff;
         }
+
+        .update-container {
+            display: none;
+            margin-top: 20px;
+        }
     </style>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 </head>
@@ -91,8 +96,8 @@
 
     <div id="voegToeContainer" style="visibility: hidden">
         <label>Naam:</label><input type="text" id="naam" required /><br>
-        <label>BeschrijvingNL:</label><input type="text" id="naam" required /><br>
-        <label>BeschrijvingEN:</label><input type="text" id="naam" required /><br>
+        <label>BeschrijvingNL:</label><input type="text" id="beschrijvingNL" required /><br>
+        <label>BeschrijvingEN:</label><input type="text" id="beschrijvingEN" required /><br>
         <button onclick="voegToe()" type="button">Toevoegen</button>
     </div>
 
@@ -104,6 +109,15 @@
         </div>
     </div>
 
+    <div id="updateContainer" class="update-container">
+        <h2>Update Oefening</h2>
+        <label>Naam:</label><input type="text" id="updateNaam" required /><br>
+        <label>BeschrijvingNL:</label><input type="text" id="updateBeschrijvingNL" required /><br>
+        <label>BeschrijvingEN:</label><input type="text" id="updateBeschrijvingEN" required /><br>
+        <input type="hidden" id="updateId" />
+        <button onclick="update()" type="button">Update</button>
+    </div>
+
     <script>
         "use strict"
         const apiBasis = "http://127.0.0.1:8000/api/"
@@ -111,7 +125,6 @@
         const apiLogin = apiBasis + "login/"
 
         let oefeningen = []
-
         let access_token = undefined
 
         const laadOefeningen = async () => {
@@ -124,7 +137,6 @@
                 }
             })
             oefeningen = await response.data
-            access_token = response.data.access_token
             console.log('E LaadOefeningen', access_token)
         }
 
@@ -139,7 +151,10 @@
                     <td>${oefening.naam}</td>
                     <td>${oefening.beschrijvingNL}</td>
                     <td>${oefening.beschrijvingEN}</td>
-                    <td onclick="verwijder(${oefening.id})"> x </td>
+                    <td>
+                        <button class="btn-update" onclick="toonUpdate(${oefening.id}, '${oefening.naam}', '${oefening.beschrijvingNL}', '${oefening.beschrijvingEN}')">Update</button>
+                        <button class="btn-delete" onclick="verwijder(${oefening.id})">Delete</button>
+                    </td>
                 </tr>`;
             });
 
@@ -147,8 +162,6 @@
             document.querySelector("#tabelInhoud").innerHTML = tabelInhoud;
             console.log('E ToonOefeningen', access_token);
         }
-
-
 
         const login = async () => {
             const password = document.querySelector("#wachtwoord").value
@@ -211,7 +224,39 @@
             console.log('E Verwijder', access_token)
             await laadOefeningen()
             toonOefeningen()
-        }	
+        }
+
+        const toonUpdate = (id, naam, beschrijvingNL, beschrijvingEN) => {
+            document.querySelector("#updateId").value = id;
+            document.querySelector("#updateNaam").value = naam;
+            document.querySelector("#updateBeschrijvingNL").value = beschrijvingNL;
+            document.querySelector("#updateBeschrijvingEN").value = beschrijvingEN;
+            document.querySelector("#updateContainer").style.display = "block";
+        }
+
+        const update = async () => {
+            console.log('B Update', access_token)
+            const id = document.querySelector("#updateId").value
+            const naam = document.querySelector("#updateNaam").value
+            const beschrijvingNL = document.querySelector("#updateBeschrijvingNL").value
+            const beschrijvingEN = document.querySelector("#updateBeschrijvingEN").value
+            const jsonstring = { "naam": naam, "beschrijvingNL": beschrijvingNL, "beschrijvingEN": beschrijvingEN }
+            console.log("update: ", jsonstring)
+            const response = await axios.put(apiOefeningen + id, jsonstring,
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'Authorization': 'Bearer ' + access_token
+                    }
+                })
+            console.log('status code', response.status)
+            access_token = response.data.access_token
+            console.log('E Update', access_token)
+            await laadOefeningen()
+            toonOefeningen()
+            document.querySelector("#updateContainer").style.display = "none"
+        }
     </script>
 
 </body>
