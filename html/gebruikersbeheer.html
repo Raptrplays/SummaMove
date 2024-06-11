@@ -2,209 +2,191 @@
 <html lang="nl">
 
 <head>
-	<title> Database Overzicht </title>
-	<meta charset="utf-8" />
-	<style>
-		body {
-			width: 80%;
-			max-width: 600px;
-			margin: auto;
-			margin-top: 50px;
-			font-family: Arial, sans-serif;
-		}
+    <title>Database Overzicht</title>
+    <meta charset="utf-8" />
+    <style>
+        body {
+            width: 80%;
+            max-width: 600px;
+            margin: auto;
+            margin-top: 50px;
+            font-family: Arial, sans-serif;
+            background-color: #333;
+        }
 
-		h1 {
-			color: #333;
-			text-align: center;
-		}
+        h1 {
+            color: #fff;
+            text-align: center;
+        }
 
-		table {
-			width: 100%;
-			border-collapse: collapse;
-			margin-top: 20px;
-		}
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
 
-		table, th, td {
-			border: 1px solid #ddd;
-		}
+        table,
+        th,
+        td {
+            border: 1px solid #fff;
+        }
 
-		th, td {
-			padding: 10px;
-			text-align: left;
-		}
+        th,
+        td {
+            padding: 10px;
+            text-align: left;
+            color: #fff;
+        }
 
-		button {
-			padding: 10px;
-			background-color: #4CAF50;
-			color: white;
-			border: none;
-			border-radius: 4px;
-			cursor: pointer;
-		}
+        button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
 
-		button:hover {
-			background-color: #45a049;
-		}
+        button:hover {
+            background-color: #45a049;
+        }
 
-		.btn-delete {
-			background-color: #d9534f;
-		}
+        .btn-delete {
+            background-color: #d9534f;
+            margin: 5px;
+        }
 
-		.btn-delete:hover {
-			background-color: #c9302c;
-		}
+        .btn-delete:hover {
+            background-color: #c9302c;
+        }
 
-		.btn-update {
-			background-color: #5cb85c;
-		}
+        .btn-update {
+            background-color: #5cb85c;
+            margin: 5px;
+        }
 
-		.btn-update:hover {
-			background-color: #4cae4c;
-		}
+        .btn-update:hover {
+            background-color: #4cae4c;
+        }
 
-		#addContainer {
-			margin-top: 20px;
-			display: flex;
-			justify-content: center;
-		}
+        label {
+            color: #fff;
+        }
 
-		#addForm {
-			width: 100%;
-		}
-
-		#addForm input,
-		#addForm select {
-			width: calc(100% - 22px);
-			padding: 10px;
-			margin: 5px 0;
-			border: 1px solid #ddd;
-			border-radius: 4px;
-			box-sizing: border-box;
-		}
-	</style>
-	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        .update-container {
+            display: none;
+            margin-top: 20px;
+        }
+    </style>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 </head>
 
 <body>
-	<h1>SummaMove - Gebruikers</h1>
-	<table>
-		<tr>
+    <h1>SummaMove - Gebruikers</h1>
+    <table id="table" style="visibility: hidden">
+        <tr>
             <th>Id</th>
-			<th>Gebruikersnaam</th>
-		</tr>
-		<tbody id="tabelInhoud">
-	</table>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Acties</th>
+        </tr>
+        <tbody id="tabelInhoud">
+    </table>
 
-	<div id="voegToeContainer" style="visibility: hidden">
-		<label>Gebruikersnaam:</label><input type="text" id="naam" required /><br>
-		<button onclick="voegToe()" type="button">Toevoegen</button>
-	</div>
+    <div id="voegToeContainer" style="visibility: hidden">
+        <label>Name:</label><input type="text" id="name" required /><br>
+        <label>Email:</label><input type="text" id="email" required /><br>
+        <button onclick="voegToe()" type="button">Toevoegen</button>
+    </div>
 
-	<div id="loginContainer" style="visibility: visible">
-		<div>
-			<input type="email" placeholder="mail" id="mail" required>
-			<input type="password" placeholder="wachtwoord" id="wachtwoord" required>
-			<button type="submit" onclick="login()">Login</button>
-		</div>
-	</div>
+    <div id="loginContainer" style="visibility: visible">
+        <div>
+            <input type="email" placeholder="mail" id="mail" required>
+            <input type="password" placeholder="wachtwoord" id="wachtwoord" required>
+            <button type="submit" onclick="login()">Login</button>
+        </div>
+    </div>
 
-	<script>
+    <div id="updateContainer" class="update-container">
+        <h2>Update Gebruiker</h2>
+        <label>Name:</label><input type="text" id="updateName" required /><br>
+        <label>Email</label><input type="text" id="updateEmail" required /><br>
+        <input type="hidden" id="updateId" />
+        <button onclick="update()" type="button">Update</button>
+    </div>
+
+    <script>
         "use strict"
         const apiBasis = "http://127.0.0.1:8000/api/"
-        const apiTeams = apiBasis + "teams/"
-        const apiCoureurs = apiBasis + "coureurs/"
+        const apiGebruikers = apiBasis + "gebruikers/"
         const apiLogin = apiBasis + "login/"
-    
-        let teams = []
-        let coureurs = []
-    
+
+        let gebruikers = []
         let access_token = undefined
-    
-        const laadTeams = async () => {
-            console.log('B LaadTeams', access_token)
-            const response = await axios.get(apiTeams, {
+
+        const laadGebruikers = async () => {
+            console.log('B LaadGebruikers', access_token)
+            const response = await axios.get(apiGebruikers, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
                     'Authorization': 'Bearer ' + access_token
                 }
             })
-    
-            const json = await response.data
-            let selectInhoud = ''
-            json.data.map(el => {
-                teams[el.id] = el.teamnaam
-                selectInhoud += `<option value="${el.id}">${el.teamnaam}</option>`
-            })
-            document.querySelector("#selectInhoud").innerHTML = selectInhoud
-            access_token = response.data.access_token
-            console.log('E LaadTeams', access_token)
+            gebruikers = await response.data
+            console.log('E LaadGebruikers', access_token)
         }
-    
-        const laadCoureurs = async () => {
-            console.log('B Laadcoureurs', access_token)
-            const response = await axios.get(apiCoureurs, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'Authorization': 'Bearer ' + access_token
-                }
-            })
-            coureurs = await response.data
-            access_token = response.data.access_token
-            console.log('E Laadcoureurs', access_token)
+
+        const toonGebruikers = () => {
+            console.log('B ToonGebruikers', access_token);
+            let tabelInhoud = '';
+
+            gebruikers.forEach(gebruiker => {
+                tabelInhoud +=
+                    `<tr>
+                    <td>${gebruiker.id}</td>
+                    <td>${gebruiker.name}</td>
+                    <td>${gebruiker.email}</td>
+                    <td>
+                        <button class="btn-update" onclick="toonUpdate(${gebruiker.id}, '${gebruiker.name}', '${gebruiker.email}')">Update</button>
+                        <button class="btn-delete" onclick="verwijder(${gebruiker.id})">Delete</button>
+                    </td>
+                </tr>`;
+            });
+
+            console.log(tabelInhoud);
+            document.querySelector("#tabelInhoud").innerHTML = tabelInhoud;
+            console.log('E ToonGebruikers', access_token);
         }
-    
-        const toonCoureurs = () => {
-            console.log('B Tooncoureurs', access_token)
-            let tabelInhoud = ''
-            coureurs.data.map(coureur => tabelInhoud += `<tr><td>${coureur.naam}</td>
-                    <td>${coureur.geboortedatum}</td>
-                    <td>${coureur.land}</td>
-                    <td>${coureur.racenummer}</td>
-                    <td>${teams[coureur.team_id]}</td>
-                    <td>${coureur.debuutjaar}</td>
-                    <td onclick="verwijder(${coureur.id})"> x </td></tr>`);
-    
-                    console.log(tabelInhoud)
-            document.querySelector("#tabelInhoud").innerHTML = tabelInhoud
-            console.log('E Tooncoureurs', access_token)
-        }
-    
-    
+
         const login = async () => {
             const password = document.querySelector("#wachtwoord").value
             const email = document.querySelector("#mail").value
             const jsonstring = { "password": password, "email": email }
             console.log("login: ", jsonstring)
-            const respons = await axios.post(apiLogin, jsonstring, { headers: { 'Content-Type': 'application/json' } })
-            console.log('status code', respons.status)
-            access_token = respons.data.access_token
+            const response = await axios.post(apiLogin, jsonstring, { headers: { 'Content-Type': 'application/json' } })
+            console.log('status code', response.status)
+            access_token = response.data.access_token
             console.log('access_token: ', access_token)
-    
+
             document.querySelector("#loginContainer").style.visibility = "hidden"
             document.querySelector("#voegToeContainer").style.visibility = "visible"
-            document.querySelectorAll("td:last-child").forEach(el => el.style.display = "inline")
+            document.querySelector("#table").style.visibility = "visible"
             laad()
         }
-    
+
         const laad = async () => {
-            await laadCoureurs()
-            await laadTeams()
-            toonCoureurs()
+            await laadGebruikers()
+            toonGebruikers()
         }
-    
+
         const voegToe = async () => {
             console.log('B Voegtoe', access_token)
-            const naam = document.querySelector("#naam").value
-            const geboortedatum = document.querySelector("#geboortedatum").value
-            const land = document.querySelector("#land").value
-            const racenummer = document.querySelector("#racenummer").value
-            const team = document.querySelector("#selectInhoud").value
-            const debuutjaar = document.querySelector("#debuutjaar").value
-            const jsonstring = { "naam": naam, "geboortedatum": geboortedatum, "land": land, "racenummer": racenummer, "team_id": team, "debuutjaar": debuutjaar }
+            const name = document.querySelector("#name").value
+            const email = document.querySelector("#email").value
+            const jsonstring = { "name": name, "email": email}
             console.log("voeg toe: ", jsonstring)
-            const respons = await axios.post(apiCoureurs, jsonstring,
+            const response = await axios.post(apiGebruikers, jsonstring,
                 {
                     headers: {
                         'Content-Type': 'application/json',
@@ -212,35 +194,61 @@
                         'Authorization': 'Bearer ' + access_token
                     }
                 })
-            console.log('status code', respons.status)
-            access_token = respons.data.access_token
+            console.log('status code', response.status)
+            access_token = response.data.access_token
             console.log('E Voegtoe', access_token)
-            await laadCoureurs()
-            toonCoureurs()
-            document.getElementById('naam').value = '';
-            document.getElementById('land').value = '';
-            document.getElementById('racenummer').value = '';
-            document.getElementById('selectInhoud').value = 1;
-            document.getElementById('geboortedatum').value = '';
-            document.getElementById('debuutjaar').value = '';
+            await laadGebruikers()
+            toonGebruikers()
+            document.getElementById('name').value = '';
+            document.getElementById('email').value = '';
         }
-    
+
         const verwijder = async (id) => {
             console.log('B Verwijder', access_token)
             console.log("verwijder: ", id)
-            const respons = await axios.delete(apiCoureurs + id, {
+            const response = await axios.delete(apiGebruikers + id, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
                     'Authorization': 'Bearer ' + access_token
                 }
             })
-            access_token = respons.data.access_token
-            console.log('status code', respons.status)
+            access_token = response.data.access_token
+            console.log('status code', response.status)
             console.log('E Verwijder', access_token)
-            await laadCoureurs()
-            toonCoureurs()
-        }	
+            await laadGebruikers()
+            toonGebruikers()
+        }
+
+        const toonUpdate = (id, name, email) => {
+            document.querySelector("#updateId").value = id;
+            document.querySelector("#updateName").value = name;
+            document.querySelector("#updateEmail").value = email;
+            document.querySelector("#updateContainer").style.display = "block";
+        }
+
+        const update = async () => {
+            console.log('B Update', access_token)
+            const id = document.querySelector("#updateId").value
+            const name = document.querySelector("#updateName").value
+            const email = document.querySelector("#updateEmail").value
+            const jsonstring = { "name": name, "email": email}
+            console.log("update: ", jsonstring)
+            const response = await axios.put(apiGebruikers + id, jsonstring,
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'Authorization': 'Bearer ' + access_token
+                    }
+                })
+            console.log('status code', response.status)
+            access_token = response.data.access_token
+            console.log('E Update', access_token)
+            await laadGebruikers()
+            toonGebruikers()
+            document.querySelector("#updateContainer").style.display = "none"
+        }
     </script>
 
 </body>

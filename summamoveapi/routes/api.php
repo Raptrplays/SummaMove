@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OefeningenController;
 use App\Http\Controllers\PrestatiesController;
 use App\Http\Controllers\AuthenticationController;
+use App\Http\Controllers\GebruikersController;
 use Database\Seeders\OefeningenSeeder;
 
 
@@ -21,7 +22,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         return auth()->user();
     });
 
-    Route::apiResource('oefeningen', OefeningenController::class)->only(['store', 'update', 'destroy']);
+    Route::apiResource('oefeningen', OefeningenController::class);
+    Route::apiResource('gebruikers', GebruikersController::class);
     Route::apiResource('prestaties', PrestatiesController::class)
         ->parameters(['prestaties' => 'prestaties'])
         ->only(['index', 'store', 'update', 'destroy']);
