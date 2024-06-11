@@ -29,8 +29,18 @@ class GebruikersController extends Controller
 
     public function store(Request $request)
     {
+
         try {
-            $gebruiker = User::create($request->all());
+            $attr = $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|unique:users,email',
+                'password' => 'required|string|min:5|confirmed'
+            ]);
+            $gebruiker = User::create([
+                'name' => $attr['name'],
+                'password' => bcrypt($attr['password']),
+                'email' => $attr['email'],
+            ]);
 
             $user = auth()->user();
             $user->tokens()->delete();
@@ -58,6 +68,11 @@ class GebruikersController extends Controller
                 'email' => 'required|string',
                 'password' => 'required|string',
             ]);
+            $gebruikerInfo = [
+                'name' => $validatedData['name'],
+                'email' => $validatedData['email'],
+                'password' => bcrypt($validatedData['password']),
+            ];
             $gebruiker->update($validatedData);
         } catch (Throwable $e) {
             Log::error('Error in GebruikerController@update: ' . $e->getMessage());
