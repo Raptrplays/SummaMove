@@ -23,7 +23,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     });
 
     Route::apiResource('oefeningen', OefeningenController::class);
-    Route::apiResource('gebruikers', GebruikersController::class);
+    Route::apiResource('gebruikers', GebruikersController::class)->except(['store']);
+    Route::post('gebruikers', [AuthenticationController::class, 'register']);
     Route::apiResource('prestaties', PrestatiesController::class)
         ->parameters(['prestaties' => 'prestaties'])
         ->only(['index', 'store', 'update', 'destroy']);
