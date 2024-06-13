@@ -7,22 +7,33 @@
     <style>
         body {
             width: 80%;
-            max-width: 600px;
             margin: auto;
             margin-top: 50px;
             font-family: Arial, sans-serif;
             background-color: #333;
+            display: grid;
+            grid-template-columns: 70% 30%;
         }
-
+ 
+        a {
+            grid-row: 1;
+        }
         h1 {
             color: #fff;
             text-align: center;
+            grid-column: 1 / 3;
+            grid-row: 2;
+        }
+        
+        #tableContainer {
+            margin-right: 50px;
+            grid-column: 1 / 2;
+            grid-row: 4;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
         }
 
         table,
@@ -73,49 +84,85 @@
             color: #fff;
         }
 
+        #loginContainer {
+            grid-column: 1 / 3;
+            grid-row: 3;
+            text-align: center;
+        }
+
+        #beheerContainer {
+            grid-column: 2 / 3;
+            grid-row: 4;
+        }
+
+        #beheerContainer input, textarea {
+            width: 100%;
+        }
         .update-container {
             display: none;
             margin-top: 20px;
+        }
+
+        textarea {
+            resize: vertical;
+            height: 100px;
         }
     </style>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 </head>
 
 <body>
+    <a href="gebruikersbeheer.html">gebruikers beheer</a>
     <h1>SummaMove - Oefeningen</h1>
-    <table id="table" style="visibility: hidden">
-        <tr>
-            <th>Id</th>
-            <th>Naam</th>
-            <th>BeschrijvingNL</th>
-            <th>BeschrijvingEN</th>
-            <th>Acties</th>
-        </tr>
-        <tbody id="tabelInhoud">
-    </table>
-
-    <div id="voegToeContainer" style="visibility: hidden">
-        <label>Naam:</label><input type="text" id="naam" required /><br>
-        <label>BeschrijvingNL:</label><input type="text" id="beschrijvingNL" required /><br>
-        <label>BeschrijvingEN:</label><input type="text" id="beschrijvingEN" required /><br>
-        <button onclick="voegToe()" type="button">Toevoegen</button>
-    </div>
-
     <div id="loginContainer" style="visibility: visible">
-        <div>
             <input type="email" placeholder="mail" id="mail" required>
             <input type="password" placeholder="wachtwoord" id="wachtwoord" required>
             <button type="submit" onclick="login()">Login</button>
-        </div>
+    </div>
+    <div id="tableContainer">
+        <table id="table" style="visibility: hidden">
+            <tr>
+                <th>Id</th>
+                <th>Naam</th>
+                <th>BeschrijvingNL</th>
+                <th>BeschrijvingEN</th>
+                <th>Acties</th>
+            </tr>
+            <tbody id="tabelInhoud">
+        </table>
     </div>
 
-    <div id="updateContainer" class="update-container">
-        <h2>Update Oefening</h2>
-        <label>Naam:</label><input type="text" id="updateNaam" required /><br>
-        <label>BeschrijvingNL:</label><input type="text" id="updateBeschrijvingNL" required /><br>
-        <label>BeschrijvingEN:</label><input type="text" id="updateBeschrijvingEN" required /><br>
-        <input type="hidden" id="updateId" />
-        <button onclick="update()" type="button">Update</button>
+    <div id="beheerContainer">
+        <div id="voegToeContainer" style="visibility: hidden">
+            <h2>Voeg oefening toe</h2>
+            <label>Naam:</label><br>
+            <input type="text" id="naam" required /><br>
+
+            <label>BeschrijvingNL:</label><br>
+            <textarea name="beschrijvingNL" id="beschrijvingNL"></textarea><br>
+
+            <label>BeschrijvingEN:</label><br>
+            <textarea name="beschrijvingEN" id="beschrijvingEN"></textarea><br>
+
+            <button onclick="voegToe()" type="button">Toevoegen</button>
+        </div>
+    
+    
+        <div id="updateContainer" class="update-container">
+            <h2>Update Oefening</h2>
+
+            <label>Naam:</label><br>
+            <input type="text" id="updateNaam" required /><br>
+
+            <label>BeschrijvingNL:</label><br>
+            <textarea name="updateBeschrijvingNL" id="updateBeschrijvingNL"></textarea><br>
+
+            <label>BeschrijvingEN:</label><br>
+            <textarea name="updateBeschrijvingEN" id="updateBeschrijvingEN"></textarea><br>
+
+            <input type="hidden" id="updateId" />
+            <button onclick="update()" type="button">Update</button>
+        </div>
     </div>
 
     <script>
