@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Gegenereerd op: 17 jun 2024 om 13:22
+-- Gegenereerd op: 18 jun 2024 om 12:53
 -- Serverversie: 10.4.27-MariaDB
 -- PHP-versie: 8.2.0
 
@@ -118,7 +118,7 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (3, '0001_01_01_000002_create_jobs_table', 1),
 (4, '2024_06_03_112714_create_oefeningen_table', 1),
 (6, '2024_06_06_070932_create_personal_access_tokens_table', 1),
-(7, '2024_06_03_112723_create_prestaties_table', 2);
+(8, '2024_06_03_112723_create_prestaties_table', 2);
 
 -- --------------------------------------------------------
 
@@ -186,12 +186,13 @@ CREATE TABLE `personal_access_tokens` (
 
 INSERT INTO `personal_access_tokens` (`id`, `tokenable_type`, `tokenable_id`, `name`, `token`, `abilities`, `last_used_at`, `expires_at`, `created_at`, `updated_at`) VALUES
 (55, 'App\\Models\\User', 3, 'API Token', 'e210d0887860bdedfd576baa07fd1081016f64c2291dd3bcbdf62f80e40c9a9e', '[\"*\"]', '2024-06-13 07:54:36', NULL, '2024-06-13 07:54:35', '2024-06-13 07:54:36'),
-(138, 'App\\Models\\User', 1, 'API Token', 'f94607babd9c4c6fa73f821474a154dfd882cec639e5225df65ad1af235ec041', '[\"*\"]', '2024-06-14 07:51:23', NULL, '2024-06-14 07:51:23', '2024-06-14 07:51:23'),
-(139, 'App\\Models\\User', 1, 'API Token', 'b8bf9cc4b0ed7be01d6ce4228784b4fd555b5887ecccc76325da4c6d9e5251da', '[\"*\"]', '2024-06-14 09:04:16', NULL, '2024-06-14 09:04:16', '2024-06-14 09:04:16'),
-(140, 'App\\Models\\User', 1, 'API Token', '89569d1dc407adc5000864e12e7df0bdd90171ccaae2388b82db1c6e20862503', '[\"*\"]', '2024-06-14 09:04:37', NULL, '2024-06-14 09:04:37', '2024-06-14 09:04:37'),
-(141, 'App\\Models\\User', 1, 'API Token', 'eca733ced1ebbfdf6a09aa60e6d70dcfc4a769a6b85db3fd06c2c8cf66224e80', '[\"*\"]', NULL, NULL, '2024-06-14 09:12:32', '2024-06-14 09:12:32'),
-(142, 'App\\Models\\User', 1, 'API Token', '64ad12cf3e9342d27cfa6d14e8b36d3a1a5e81d4389518f5a02e99e7568cc945', '[\"*\"]', '2024-06-14 09:26:37', NULL, '2024-06-14 09:19:45', '2024-06-14 09:26:37'),
-(143, 'App\\Models\\User', 1, 'API Token', '7d05a72281a6df159d22bb331c730727b299f42442106c03d5283c2fcc51aa20', '[\"*\"]', '2024-06-14 09:27:07', NULL, '2024-06-14 09:26:44', '2024-06-14 09:27:07');
+(147, 'App\\Models\\User', 1, 'API Token', 'f0867a5e154fe30dc7b56b3b96ed842d38e2e82f9fd92315b4bb5bd0e3c4075b', '[\"*\"]', NULL, NULL, '2024-06-18 07:35:42', '2024-06-18 07:35:42'),
+(148, 'App\\Models\\User', 1, 'API Token', '9c1d83ae28439ff2e5c00e37254e71319f1d538182150e4237151fed93318322', '[\"*\"]', '2024-06-18 07:37:00', NULL, '2024-06-18 07:36:43', '2024-06-18 07:37:00'),
+(149, 'App\\Models\\User', 1, 'API Token', 'daa10067c86eb65b0fc2a35a9d69e9a5cba44818a33105328143f7a4dee8bf3d', '[\"*\"]', '2024-06-18 08:26:23', NULL, '2024-06-18 08:26:23', '2024-06-18 08:26:23'),
+(150, 'App\\Models\\User', 1, 'API Token', 'dc8d49cf457980da7abb8793f4033867ebc33a0250a233891872074f2aa401fe', '[\"*\"]', '2024-06-18 08:27:41', NULL, '2024-06-18 08:27:40', '2024-06-18 08:27:41'),
+(151, 'App\\Models\\User', 1, 'API Token', '05c53331f15d78008aaabfea60f08dc49583ec2d32585c61e5075f0f2e4f29eb', '[\"*\"]', '2024-06-18 08:28:01', NULL, '2024-06-18 08:28:00', '2024-06-18 08:28:01'),
+(152, 'App\\Models\\User', 1, 'API Token', '6e11a0cd037f0a3e732d2a61df774d617e4e38c55e88518477378e56872ed1e6', '[\"*\"]', '2024-06-18 08:28:23', NULL, '2024-06-18 08:28:23', '2024-06-18 08:28:23'),
+(153, 'App\\Models\\User', 1, 'API Token', '5a9f34984bcf8d5ebb24b01b85e9eb6a47ab9b71e10d9e1e85a4f42971609e6d', '[\"*\"]', NULL, NULL, '2024-06-18 08:28:51', '2024-06-18 08:28:51');
 
 -- --------------------------------------------------------
 
@@ -203,7 +204,7 @@ CREATE TABLE `prestaties` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `gebruikerId` bigint(20) UNSIGNED NOT NULL,
   `oefeningId` bigint(20) UNSIGNED NOT NULL,
-  `datum` varchar(255) NOT NULL,
+  `datum` date NOT NULL,
   `aantal` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -364,7 +365,7 @@ ALTER TABLE `jobs`
 -- AUTO_INCREMENT voor een tabel `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT voor een tabel `oefeningen`
@@ -376,13 +377,13 @@ ALTER TABLE `oefeningen`
 -- AUTO_INCREMENT voor een tabel `personal_access_tokens`
 --
 ALTER TABLE `personal_access_tokens`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=144;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=154;
 
 --
 -- AUTO_INCREMENT voor een tabel `prestaties`
 --
 ALTER TABLE `prestaties`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT voor een tabel `users`

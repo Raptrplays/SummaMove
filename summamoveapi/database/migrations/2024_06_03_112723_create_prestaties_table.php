@@ -20,7 +20,7 @@ return new class extends Migration
             $table->unsignedBigInteger('oefeningId');
             $table->foreign('oefeningId')->references('id')->on('oefeningen')->onDelete('cascade');
             
-            $table->string('datum');
+            $table->date('datum');
             
             $table->integer('aantal');
 
