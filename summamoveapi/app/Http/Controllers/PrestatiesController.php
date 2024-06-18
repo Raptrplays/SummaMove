@@ -37,7 +37,7 @@ class PrestatiesController extends Controller
         $validationRules = [
             'gebruikerId' => 'required|integer',
             'oefeningId' => 'required|integer',
-            'datum' => 'required',
+            'datum' => 'required|date',
             'aantal' => 'required|integer|min:1',
         ];
     
@@ -76,7 +76,7 @@ class PrestatiesController extends Controller
             $validatedData = $request->validate([
                 'gebruikerId' => 'required|integer',
                 'oefeningId' => 'required|integer',
-                'datum' => 'required',
+                'datum' => 'required|date',
                 'aantal' => 'required|integer|min:1',
             ]);
             $prestaties->update($validatedData);
