@@ -37,7 +37,7 @@ class PrestatiesController extends Controller
         $validationRules = [
             'gebruikerId' => 'required|integer',
             'oefeningId' => 'required|integer',
-            'datum' => 'required|string',
+            'datum' => 'required',
             'aantal' => 'required|integer|min:1',
         ];
     
