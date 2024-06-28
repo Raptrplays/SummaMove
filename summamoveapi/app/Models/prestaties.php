@@ -20,4 +20,9 @@ class Prestaties extends Model
 
     public $timestamps = false;
 
+    public function oefening()
+{
+    return $this->belongsTo(Oefeningen::class, 'oefeningId');
+}
+
 }

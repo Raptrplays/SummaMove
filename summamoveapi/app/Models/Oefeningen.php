@@ -12,10 +12,12 @@ class Oefeningen extends Model
     protected $table = 'oefeningen';
 
     protected $fillable = [
-        "naam", 
-        "beschrijvingNL", 
+        "naam",
+        "beschrijvingNL",
         "beschrijvingEN",
     ];
 
     public $timestamps = false;
+
+
 }
